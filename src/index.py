@@ -1,220 +1,45 @@
-# -*- coding: utf-8 -*-
-#https://community.grafana.com/t/unable-to-create-table-view-for-json-data/20304
-from calendar import timegm
-from datetime import datetime
-import _strptime  # https://bugs.python.org/issue7980
+import os
+from flask import Flask
 import numpy as np
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
-app.config["JSON_AS_ASCII"] = False
-CORS(app)
 
-
-def convert_to_time_ms(timestamp):
-    return 1000 * timegm(datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
-
+print(os.listdir(os.getcwd()))
 
 @app.route('/')
-def health_check():
-    return 'This datasource is healthy.'
+def home():
+    print(os.listdir(os.getcwd()))
+    return 'Home Page Route'
 
 
-@app.route('/search', methods=['POST'])
-def search():
-    return jsonify(['Salary', 'Currency','Register'])
+@app.route('/about')
+def about():
+    return 'About Page Route'
 
 
-@app.route('/query', methods=['POST'])
-def query():
-    req = request.get_json()
-    print(req)
-    #取出指標的值選擇指標
-    for target in req['targets']:
-        
-        req_type = target.get('type', 'timeseries')
-        target = target['target'].split(':', 1)
-        #判斷指標等於timeseries
-        if req_type == 'timeseries':
-            if target[0]=='Salary':
-
-            #print(target)
-        
-                data = [
-                    {
-                    "columns":[
-                    {"text":"國家","type":"string"},
-                    {"text":"平均薪水","type":"number"}
-                    ],
-                    "rows":[
-                        ["Taiwan",42000],
-                        ["Japan",37000],
-                        ["Amarican",87000],
-                        ["England",95000],
-                        ["France",72000]
-                    ],
-                    "type":"table"
-                    }
-                ]
-
-                return jsonify(data)
-            
-            elif target[0]=='Currency':
-
-                data2 = [
-                    {
-                    "columns":[
-                    {"text":"國家","type":"string"},
-                    {"text":"幣值","type":"number"}
-                    ],
-                    "rows":[
-                        ["USD","30.415"],
-                        ["GBP","37.19"],
-                        ["AUD","20.06"],
-                        ["JPY","0.216"],
-                        ["EUR","32.63"],
-                        ["MYR","5.77"],
-                        ["CNY","4.298"]
-                    ],
-                    "type":"table"
-                    }
-                ]
-
-                return jsonify(data2)
-            
-            elif target[0]=='Register':
-
-                data3 = [
-                    {
-                    "columns":[
-                    {"text":"Time","type":"timestamp"},
-                    {"text":"掛號人數","type":"number"}
-                    ],
-                    "rows":[
-                        ["2023-05-12 08:30:00","16"],
-                        ["2023-05-13 09:00:00","84"],
-                        ["2023-05-14 12:00:00","65"],
-                        ["2023-05-15 14:00:00","25"],
-                        ["2023-05-16 17:45:00","54"],
-                        
-                    ],
-                    "type":"timeseries"
-                    }
-                ]
-
-                return jsonify(data3)        
-        elif req_type == 'table':
-            if target[0]=='Salary':
-
-            #print(target)
-        
-                data = [
-                    {
-                    "columns":[
-                    {"text":"國家","type":"string"},
-                    {"text":"平均薪水","type":"number"}
-                    ],
-                    "rows":[
-                        ["Taiwan",42000],
-                        ["Japan",37000],
-                        ["Amarican",87000],
-                        ["England",95000],
-                        ["France",72000]
-                    ],
-                    "type":"table"
-                    }
-                ]
-
-                return jsonify(data)
-            
-            elif target[0]=='Currency':
-
-                data2 = [
-                    {
-                    "columns":[
-                    {"text":"國家","type":"string"},
-                    {"text":"幣值","type":"number"}
-                    ],
-                    "rows":[
-                        ["USD","30.415"],
-                        ["GBP","37.19"],
-                        ["AUD","20.06"],
-                        ["JPY","0.216"],
-                        ["EUR","32.63"],
-                        ["MYR","5.77"],
-                        ["CNY","4.298"]
-                    ],
-                    "type":"table"
-                    }
-                ]
-
-                return jsonify(data2)
-            
-            elif target[0]=='Register':
-
-                data3 = [
-                    {
-                    "columns":[
-                    {"text":"Time","type":"timestamp"},
-                    {"text":"掛號人數","type":"number"}
-                    ],
-                    "rows":[
-                        ["2023-05-12 08:30:00","16"],
-                        ["2023-05-13 09:00:00","84"],
-                        ["2023-05-14 12:00:00","65"],
-                        ["2023-05-15 14:00:00","25"],
-                        ["2023-05-16 17:45:00","54"],
-                        
-                    ],
-                    "type":"timeseries"
-                    }
-                ]
-
-                return jsonify(data3) 
-            
-@app.route('/annotations', methods=['POST'])
-def annotations():
-    req = request.get_json()
-    data = [
-        {
-            "annotation": 'This is the annotation',
-            "time": (convert_to_time_ms(req['range']['from']) +
-                     convert_to_time_ms(req['range']['to'])) / 2,
-            "title": 'Deployment notes',
-            "tags": ['tag1', 'tag2'],
-            "text": 'Hm, something went wrong...'
-        }
-    ]
-    return jsonify(data)
+@app.route('/portfolio')
+def portfolio():
+    a = np.random.choice([1, 2, 3, 4, 5, 6])
+    return f'Portfolio {a} Page Route'
 
 
-@app.route('/tag-keys', methods=['POST'])
-def tag_keys():
-    data = [
-        {"type": "string", "text": "City"},
-        {"type": "string", "text": "Country"}
-    ]
-    return jsonify(data)
+@app.route('/contact')
+def contact():
+    return 'Contact Page Route'
 
 
-@app.route('/tag-values', methods=['POST'])
-def tag_values():
-    req = request.get_json()
-    if req['key'] == 'City':
-        return jsonify([
-            {'text': 'Tokyo'},
-            {'text': 'So Paulo'},
-            {'text': 'Jakarta'}
-        ])
-    elif req['key'] == 'Country':
-        return jsonify([
-            {'text': 'China'},
-            {'text': 'India'},
-            {'text': 'United States'}
-        ])
+@app.route('/api')
+def api():
+    with open(
+            os.path.join(os.getcwd(), 'data', 'data.json'),
+            mode='r'
+    ) as my_file:
+        text = my_file.read()
+        return text
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=3000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    print(os.getcwd())
+    app.run(host='127.0.0.1', port=port, debug=True)
+
