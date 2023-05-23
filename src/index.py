@@ -9,12 +9,12 @@ print(os.listdir(os.getcwd()))
 @app.route('/')
 def home():
     print(os.listdir(os.getcwd()))
-    return 'Home Page Route'
+    return 'Hi,welcome.I am Galileo.'
 
 
 @app.route('/about')
 def about():
-    return 'About Page Route'
+    return 'This is about Page Route.'
 
 
 @app.route('/portfolio')
